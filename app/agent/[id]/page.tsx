@@ -1,298 +1,265 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Mic, MicOff } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState, useCallback } from "react";
+import { Mic, MicOff, Headphones, Loader2, PhoneOff } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
-
-interface VoiceAgentCardProps {
-    agentName?: string;
-    agentRole?: string;
-    agentAvatar?: string;
-    isActive?: boolean;
-    onToggle?: (isActive: boolean) => void;
-    className?: string;
-}
+import {
+  RoomContext,
+  useVoiceAssistant,
+  DisconnectButton,
+  RoomAudioRenderer
+} from "@livekit/components-react";
+import { Room, RoomEvent } from "livekit-client";
+import type { ConnectionDetails } from "../../api/connection-details/route";
 
 function VoiceAgentCard({
-    agentName = "AI Assistant",
-    agentRole = "Voice Agent",
-    agentAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
-    isActive = false,
-    onToggle,
-    className
-}: VoiceAgentCardProps) {
-    const [listening, setListening] = useState(isActive);
-    const [time, setTime] = useState(0);
+  agentName = "AI Assistant",
+  agentRole = "Voice Agent",
+  agentAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+  onConnect,
+}: {
+  agentName?: string;
+  agentRole?: string;
+  agentAvatar?: string;
+  onConnect: () => void;
+}) {
+  const { state: agentState } = useVoiceAssistant();
+  console.log("🚀 ~ VoiceAgentCard ~ agentState:", agentState)
+  const [time, setTime] = useState(0);
 
-    useEffect(() => {
-        setListening(isActive);
-    }, [isActive]);
+  const isListening = agentState === "listening";
+  const isSpeaking = agentState === "speaking";
+  const isThinking = agentState === "thinking";
+  const isConnected = isListening || isSpeaking || isThinking;
+  const isDisconnected = agentState === "disconnected";
+  const isConnecting = agentState === "connecting";
 
-    useEffect(() => {
-        let intervalId: number | any;
+  useEffect(() => {
+    let intervalId: any;
+    if (isConnected) {
+      intervalId = setInterval(() => {
+        setTime((t) => t + 1);
+      }, 1000);
+    } else {
+      setTime(0);
+    }
+    return () => clearInterval(intervalId);
+  }, [isConnected]);
 
-        if (listening) {
-            intervalId = setInterval(() => {
-                setTime((t) => t + 1);
-            }, 1000);
-        } else {
-            setTime(0);
-        }
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
 
-        return () => clearInterval(intervalId);
-    }, [listening]);
+  const handleToggle = () => {
+    if (isDisconnected) onConnect();
+  };
 
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-    };
+  const MicButton = () => (
+    <motion.button
+      onClick={handleToggle}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={cn(
+        "relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300",
+        isConnected
+          ? "bg-red-500 hover:bg-red-600 text-white"
+          : "bg-primary hover:bg-primary/90 text-primary-foreground"
+      )}
+    >
+      <AnimatePresence mode="wait">
+        {isConnected ? (
+          <motion.div
+            key="mic-off"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            exit={{ scale: 0, rotate: 180 }}
+            // transition={{ duration: 0.2 }}
+          >
+            {/* <MicOff className="w-6 h-6" /> */}
+            <div className={`w-8 h-8 flex items-center justify-center  text-white rounded-md relative ${isConnected ? 'bg-red-500' : 'bg-blue-500'} `}>
+              <Headphones
+                className={`w-4 h-4 absolute transition-opacity duration-300 ${isConnecting || isConnected ? "opacity-0" : "opacity-100"
+                  }`}
+              />
+              <Loader2
+                className={`w-4 h-4 absolute animate-spin transition-opacity duration-300 ${isConnecting ? "opacity-100" : "opacity-0"
+                  }`}
+              />
+              {isConnected && (
+                <span className="text-xs absolute"><PhoneOff /></span>
+              )}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="mic-on"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            exit={{ scale: 0, rotate: 180 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Mic className="w-6 h-6" />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-    const handleToggle = () => {
-        const newState = !listening;
-        setListening(newState);
-        onToggle?.(newState);
-    };
+      {/* {isConnected && (
+        <motion.div
+          className="absolute inset-0 rounded-full bg-red-500/30"
+          initial={{ scale: 1, opacity: 0 }}
+          animate={{ scale: 1.5, opacity: [0, 0.5, 0] }}
+          exit={{ scale: 1, opacity: 0 }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+      )} */}
+    </motion.button>
+  );
 
-    return (
-        <Card className={cn(
-            "relative overflow-hidden p-6 transition-all duration-300 hover:scale-[1.02] group",
-            listening && "ring-2 ring-primary/50 shadow-lg",
-            className
-        )}>
-            {/* Animated background gradient */}
+  return (
+    <Card className={cn(
+      "relative overflow-hidden p-6 transition-all duration-300 hover:scale-[1.02] group",
+      isConnected && "ring-2 ring-primary/50 shadow-lg"
+    )}>
+      <motion.div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100"
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: isConnected ? 0.1 : 0,
+          background: isConnected
+            ? "linear-gradient(45deg, hsl(var(--primary)) 0%, transparent 50%, hsl(var(--primary)) 100%)"
+            : "transparent"
+        }}
+        transition={{ duration: 0.3 }}
+      />
+
+      <div className="absolute top-4 right-4">
+        <motion.div
+          className={cn("w-3 h-3 rounded-full", isConnected ? "bg-green-500" : "bg-gray-400")}
+          animate={isConnected ? { scale: [1, 1.2, 1] } : { scale: 1 }}
+          transition={{ duration: 1, repeat: isConnected ? Infinity : 0 }}
+        />
+      </div>
+
+      <div className="flex flex-col items-center space-y-4">
+        <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-border">
+          <img
+            src={agentAvatar}
+            alt={agentName}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        <div className="text-center space-y-1">
+          <h3 className="font-semibold text-lg text-foreground">{agentName}</h3>
+          <p className="text-sm text-muted-foreground">{agentRole}</p>
+        </div>
+
+        <div className="flex items-center justify-center h-8 space-x-1">
+          {[...Array(12)].map((_, i) => (
             <motion.div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100"
-                initial={{ opacity: 0 }}
-                animate={{
-                    opacity: listening ? 0.1 : 0,
-                    background: listening
-                        ? "linear-gradient(45deg, hsl(var(--primary)) 0%, transparent 50%, hsl(var(--primary)) 100%)"
-                        : "transparent"
-                }}
-                transition={{ duration: 0.3 }}
+              key={i}
+              className="w-1 bg-primary rounded-full"
+              initial={{ height: 4 }}
+              animate={{
+                height: isConnected ? [4, 8 + Math.random() * 16, 6 + Math.random() * 8, 4] : 4,
+                opacity: isConnected ? 1 : 0.3
+              }}
+              transition={{
+                duration: isConnected ? 0.8 : 0.3,
+                repeat: isConnected ? Infinity : 0,
+                delay: isConnected ? i * 0.1 : 0,
+                ease: "easeInOut"
+              }}
             />
+          ))}
+        </div>
 
-            {/* Status indicator */}
-            <div className="absolute top-4 right-4">
-                <motion.div
-                    className={cn(
-                        "w-3 h-3 rounded-full",
-                        listening ? "bg-green-500" : "bg-gray-400"
-                    )}
-                    animate={listening ? { scale: [1, 1.2, 1] } : { scale: 1 }}
-                    transition={{ duration: 1, repeat: listening ? Infinity : 0 }}
-                />
-            </div>
+        <div className="font-mono text-sm text-muted-foreground">
+          {formatTime(time)}
+        </div>
 
-            <div className="flex flex-col items-center space-y-4">
-                {/* Agent Avatar */}
-                <motion.div
-                    className="relative"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                >
-                    <div className={cn(
-                        "w-20 h-20 rounded-full overflow-hidden border-4 transition-colors duration-300",
-                        listening ? "border-primary" : "border-border"
-                    )}>
-                        <img
-                            src={agentAvatar}
-                            alt={agentName}
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
+        {isConnected || isListening || isSpeaking || isThinking ? (
+          <DisconnectButton>
+            <MicButton />
+          </DisconnectButton>
+        ) : (
+          <MicButton />
+        )}
 
-                    {/* Pulse animation when listening */}
-                    <AnimatePresence>
-                        {listening && (
-                            <motion.div
-                                className="absolute inset-0 rounded-full border-2 border-primary"
-                                initial={{ scale: 1, opacity: 1 }}
-                                animate={{ scale: 1.5, opacity: 0 }}
-                                exit={{ scale: 1, opacity: 0 }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                            />
-                        )}
-                    </AnimatePresence>
-                </motion.div>
-
-                {/* Agent Info */}
-                <div className="text-center space-y-1">
-                    <h3 className="font-semibold text-lg text-foreground">{agentName}</h3>
-                    <p className="text-sm text-muted-foreground">{agentRole}</p>
-                </div>
-
-                {/* Voice Visualizer */}
-                <div className="flex items-center justify-center h-8 space-x-1">
-                    {[...Array(12)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="w-1 bg-primary rounded-full"
-                            initial={{ height: 4 }}
-                            animate={{
-                                height: listening
-                                    ? [4, 8 + Math.random() * 16, 6 + Math.random() * 8, 4]
-                                    : 4,
-                                opacity: listening ? 1 : 0.3
-                            }}
-                            transition={{
-                                duration: listening ? 0.8 : 0.3,
-                                repeat: listening ? Infinity : 0,
-                                delay: listening ? i * 0.1 : 0,
-                                ease: "easeInOut",
-                            }}
-                        />
-                    ))}
-                </div>
-
-                {/* Timer */}
-                <motion.div
-                    className="font-mono text-sm text-muted-foreground"
-                    animate={{ opacity: listening ? 1 : 0.5 }}
-                >
-                    {formatTime(time)}
-                </motion.div>
-
-                {/* Microphone Button */}
-                <motion.button
-                    className={cn(
-                        "relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300",
-                        listening
-                            ? "bg-red-500 hover:bg-red-600 text-white"
-                            : "bg-primary hover:bg-primary/90 text-primary-foreground"
-                    )}
-                    onClick={handleToggle}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <AnimatePresence mode="wait">
-                        {listening ? (
-                            <motion.div
-                                key="mic-off"
-                                initial={{ scale: 0, rotate: -180 }}
-                                animate={{ scale: 1, rotate: 0 }}
-                                exit={{ scale: 0, rotate: 180 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <MicOff className="w-6 h-6" />
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="mic-on"
-                                initial={{ scale: 0, rotate: -180 }}
-                                animate={{ scale: 1, rotate: 0 }}
-                                exit={{ scale: 0, rotate: 180 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <Mic className="w-6 h-6" />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Button glow effect */}
-                    <AnimatePresence>
-                        {listening && (
-                            <motion.div
-                                className="absolute inset-0 rounded-full bg-red-500/30"
-                                initial={{ scale: 1, opacity: 0 }}
-                                animate={{ scale: 1.5, opacity: [0, 0.5, 0] }}
-                                exit={{ scale: 1, opacity: 0 }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                            />
-                        )}
-                    </AnimatePresence>
-                </motion.button>
-
-                {/* Status Text */}
-                <motion.p
-                    className="text-xs text-center text-muted-foreground"
-                    animate={{ opacity: listening ? 1 : 0.7 }}
-                >
-                    {listening ? "Listening..." : "Click to start"}
-                </motion.p>
-            </div>
-        </Card>
-    );
+        <p className="text-xs text-center text-muted-foreground">
+          {isListening ? "Listening..." : isConnecting ? "Connecting..." : isSpeaking ? "Speaking..." : isThinking ? "Thinking..." : "Click to start"}
+        </p>
+      </div>
+    </Card>
+  );
 }
 
 function MultipleVoiceAgentCards() {
-    const [activeAgents, setActiveAgents] = useState<Record<string, boolean>>({});
+  const [room] = useState(new Room());
 
-    const agents = [
-        // {
-        //   id: "assistant-1",
-        //   name: "Sarah",
-        //   role: "Customer Support",
-        //   avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-        // },
-        // {
-        //     id: "assistant-2",
-        //     name: "Alex",
-        //     role: "Technical Support",
-        //     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-        // },
-        {
-          id: "assistant-3",
-          name: "Maya",
-          role: "Sales Assistant",
-          avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
-        },
-        // {
-        //   id: "assistant-4",
-        //   name: "David",
-        //   role: "AI Researcher",
-        //   avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-        // }
-    ];
-
-    const handleAgentToggle = (agentId: string, isActive: boolean) => {
-        console.log("🚀 ~ handleAgentToggle ~ isActive:", isActive)
-        setActiveAgents(prev => ({
-            ...prev,
-            [agentId]: isActive
-        }));
+  useEffect(() => {
+    room.on(RoomEvent.MediaDevicesError, onDeviceFailure);
+    return () => {
+      room.off(RoomEvent.MediaDevicesError, onDeviceFailure);
     };
+  }, [room]);
 
-
-    //agent functionality
-     
-
-    return (
-        <div className="min-h-screen  p-6">
-            <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-foreground mb-2">Voice Agent Dashboard</h1>
-                    <p className="text-muted-foreground">Manage your AI voice assistants</p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 justify-items-center ">
-
-                    {agents.map((agent) => (
-                        <div className="w-[25%]">
-                        <VoiceAgentCard
-                            key={agent.id}
-                            agentName={agent.name}
-                            agentRole={agent.role}
-                            agentAvatar={agent.avatar}
-                            isActive={activeAgents[agent.id] || false}
-                            onToggle={(isActive) => handleAgentToggle(agent.id, isActive)}
-                        />
-                        </div>
-                    ))}
-                </div>
-
-
-                <div className="mt-8 text-center">
-                    <p className="text-sm text-muted-foreground">
-                        Active agents: {Object.values(activeAgents).filter(Boolean).length} / {agents.length}
-                    </p>
-                </div>
-            </div>
-        </div>
+  const onConnect = useCallback(async () => {
+    const companyId: any = "6869636ed594fd6701d7714f";
+    const url = new URL(
+      process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT ?? "/api/connection-details",
+      window.location.origin
     );
+    url.searchParams.set("companyId", companyId);
+    const response = await fetch(url.toString());
+    const connectionDetailsData: ConnectionDetails = await response.json();
+    await room.connect(connectionDetailsData.serverUrl, connectionDetailsData.participantToken);
+    await room.localParticipant.setMicrophoneEnabled(true);
+  }, [room]);
+
+  const agents = [
+    {
+      id: "assistant-3",
+      name: "Maya",
+      role: "Sales Assistant",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+    }
+  ];
+
+  return (
+    <RoomContext.Provider value={room}>
+      <RoomAudioRenderer />
+      <div className="min-h-screen p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Voice Agent Dashboard</h1>
+            <p className="text-muted-foreground">Manage your AI voice assistants</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 justify-items-center">
+            {agents.map((agent) => (
+              <div key={agent.id} className="w-[25%]">
+                <VoiceAgentCard
+                  agentName={agent.name}
+                  agentRole={agent.role}
+                  agentAvatar={agent.avatar}
+                  onConnect={onConnect}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </RoomContext.Provider>
+  );
 }
 
 export default MultipleVoiceAgentCards;
+
+function onDeviceFailure(error: Error) {
+  console.error(error);
+  alert("Microphone/camera permission failed. Please allow access and reload.");
+}
