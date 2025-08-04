@@ -71,51 +71,51 @@ function VoiceAgentCard({
       )}
     >
       <AnimatePresence mode="wait">
+
         {isConnected ? (
           <motion.div
             key="mic-off"
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            exit={{ scale: 0, rotate: 180 }}
-            // transition={{ duration: 0.2 }}
+            // initial={{ scale: 0,  }}
+            animate={{ scale: 1, }}
+            // exit={{ scale: 0 }}
+            transition={{ duration: 0.2 }}
           >
             {/* <MicOff className="w-6 h-6" /> */}
-            <div className={`w-8 h-8 flex items-center justify-center  text-white rounded-md relative ${isConnected ? 'bg-red-500' : 'bg-blue-500'} `}>
-              <Headphones
-                className={`w-4 h-4 absolute transition-opacity duration-300 ${isConnecting || isConnected ? "opacity-0" : "opacity-100"
-                  }`}
-              />
-              <Loader2
-                className={`w-4 h-4 absolute animate-spin transition-opacity duration-300 ${isConnecting ? "opacity-100" : "opacity-0"
-                  }`}
-              />
+            <div className={`w-8 h-8 flex items-center justify-center  text-white rounded-md relative ${isConnected ? 'bg-red-500' : 'bg-blue-500'}`}>
               {isConnected && (
-                <span className="text-xs absolute"><PhoneOff /></span>
+                <span className="text-xs absolute "><PhoneOff /></span>
               )}
             </div>
           </motion.div>
+
         ) : (
           <motion.div
             key="mic-on"
-            initial={{ scale: 0, rotate: -180 }}
+            // initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
-            exit={{ scale: 0, rotate: 180 }}
+            // exit={{ scale: 0, rotate: 180 }}
             transition={{ duration: 0.2 }}
           >
-            <Mic className="w-6 h-6" />
+            {isConnecting ?
+            <div className={`w-8 h-8 flex items-center justify-center  text-white rounded-md relative  bg-blue-500} `}>
+             <Loader2 className={`w-5 h-5  animate-spin transition-opacity duration-300 `}
+            /> </div>:
+              <Mic className="w-7 h-8 cursor-pointer" />
+
+            }
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* {isConnected && (
+      {isConnected && (
         <motion.div
-          className="absolute inset-0 rounded-full bg-red-500/30"
-          initial={{ scale: 1, opacity: 0 }}
+          className="absolute inset-0 rounded-full bg-red-500/30 cursor-pointer"
+          // initial={{ scale: 1, opacity: 0 }}
           animate={{ scale: 1.5, opacity: [0, 0.5, 0] }}
-          exit={{ scale: 1, opacity: 0 }}
-          transition={{ duration: 1.5, repeat: Infinity }}
+        // exit={{ scale: 1, opacity: 0 }}
+        // transition={{ duration: 1.5, repeat: Infinity }}
         />
-      )} */}
+      )}
     </motion.button>
   );
 
@@ -165,15 +165,15 @@ function VoiceAgentCard({
               className="w-1 bg-primary rounded-full"
               initial={{ height: 4 }}
               animate={{
-                height: isConnected ? [4, 8 + Math.random() * 16, 6 + Math.random() * 8, 4] : 4,
-                opacity: isConnected ? 1 : 0.3
+                height: isSpeaking ? [4, 8 + Math.random() * 16, 6 + Math.random() * 8, 4] : 4,
+                opacity: isSpeaking ? 1 : 0.3
               }}
-              transition={{
-                duration: isConnected ? 0.8 : 0.3,
-                repeat: isConnected ? Infinity : 0,
-                delay: isConnected ? i * 0.1 : 0,
-                ease: "easeInOut"
-              }}
+            // transition={{
+            //   duration: isSpeaking ? 0.8 : 0.3,
+            //   repeat: isSpeaking ? Infinity : 0,
+            //   delay: isSpeaking ? i * 0.1 : 0,
+            //   ease: "easeInOut"
+            // }}
             />
           ))}
         </div>
