@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Mic, MicOff, Headphones, Loader2, PhoneOff } from "lucide-react";
+import { Mic, MicOff, Headphones, Loader2, PhoneOff, MessageSquare } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import {
 } from "@livekit/components-react";
 import { Room, RoomEvent } from "livekit-client";
 import type { ConnectionDetails } from "../../api/connection-details/route";
+import { useSearchParams } from "next/navigation";
 
 function VoiceAgentCard({
   agentName = "AI Assistant",
@@ -28,6 +29,11 @@ function VoiceAgentCard({
   const { state: agentState } = useVoiceAssistant();
   console.log("🚀 ~ VoiceAgentCard ~ agentState:", agentState)
   const [time, setTime] = useState(0);
+  const [openModel,setOpenModel] = useState(false)
+  console.log("🚀 ~ VoiceAgentCard ~ openModel:", openModel)
+  const searchParams = useSearchParams();
+  const training = searchParams.get("training");
+  console.log("🚀 ~ VoiceAgentCard ~ train:", training)
 
   const isListening = agentState === "listening";
   const isSpeaking = agentState === "speaking";
@@ -57,6 +63,8 @@ function VoiceAgentCard({
   const handleToggle = () => {
     if (isDisconnected) onConnect();
   };
+
+  
 
   const MicButton = () => (
     <motion.button
@@ -136,7 +144,9 @@ function VoiceAgentCard({
         transition={{ duration: 0.3 }}
       />
 
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 flex gap-2">
+        {training == 'verticasoft'&& <MessageSquare onClick={()=>setOpenModel(prev=>!prev)} className="w-3 h-3 cursor-pointer" />}
+        
         <motion.div
           className={cn("w-3 h-3 rounded-full", isConnected ? "bg-green-500" : "bg-gray-400")}
           animate={isConnected ? { scale: [1, 1.2, 1] } : { scale: 1 }}
