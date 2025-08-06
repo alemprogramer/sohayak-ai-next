@@ -1,10 +1,22 @@
 import React from 'react'
-import Header from '../__components/Header'
 import { Button } from '@/components/ui/button'
 import { Clock, Globe, Headphones, MessageCircle, Mic, Phone, Users } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import TryDemoButton from './__components/TryDemoButton';
 
-function pages() {
+
+async function getAgentData() {
+  const res = await fetch(
+    "https://voice-agent.verticasoft.com/api/v1/en/agent?from=shohayok",
+    { cache: "force-cache" } // "no-store"  // live data এর জন্য
+  );
+  if (!res.ok) throw new Error("Failed to fetch agent data");
+  return res.json();
+}
+
+async function pages() {
+   const {data} = await getAgentData();
+   console.log("🚀 ~ pages ~ agentData:", data)
   return (
    <>
    {/* AI Voice Agent Demo Cards */}
@@ -22,7 +34,7 @@ function pages() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Customer Support Demo */}
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              {/* <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Headphones className="w-8 h-8 text-white" />
@@ -39,30 +51,34 @@ function pages() {
                   </Button>
                   <p className="text-sm text-gray-500 mt-3">⏱️ 2-3 min demo • 🗣️ Bengali & English</p>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* Sales Assistant Demo */}
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              {data?.map((item:any,i:any)=>(
+                <Card key={i} className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Phone className="w-8 h-8 text-white" />
                   </div>
-                  <CardTitle className="text-xl font-bold text-gray-900">Sales Assistant</CardTitle>
+                  <CardTitle className="text-xl font-bold text-gray-900">{item?.name}</CardTitle>
                   <CardDescription className="text-gray-600">
-                    Product recommendations and sales conversations
+                    {item?.text}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <Button className="bg-teal-600 hover:bg-teal-700 text-white w-full flex items-center justify-center gap-2">
+                  {/* <Button  className="bg-teal-600 hover:bg-teal-700 text-white w-full flex items-center justify-center gap-2 cursor-pointer">
                     <Mic className="w-4 h-4" />
                     Try Sales Demo
-                  </Button>
+                  </Button> */}
+                  <TryDemoButton itemId={item._id} />
                   <p className="text-sm text-gray-500 mt-3">⏱️ 3-4 min demo • 💰 Product focused</p>
                 </CardContent>
               </Card>
+              ))}
+              
 
               {/* Technical Support Demo */}
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              {/* <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <MessageCircle className="w-8 h-8 text-white" />
@@ -79,10 +95,10 @@ function pages() {
                   </Button>
                   <p className="text-sm text-gray-500 mt-3">⏱️ 4-5 min demo • 🔧 Problem solving</p>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* Appointment Booking Demo */}
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              {/* <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Clock className="w-8 h-8 text-white" />
@@ -99,10 +115,10 @@ function pages() {
                   </Button>
                   <p className="text-sm text-gray-500 mt-3">⏱️ 2-3 min demo • 📅 Calendar integration</p>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* Multi-language Demo */}
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              {/* <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Globe className="w-8 h-8 text-white" />
@@ -119,10 +135,10 @@ function pages() {
                   </Button>
                   <p className="text-sm text-gray-500 mt-3">⏱️ 3-4 min demo • 🌐 বাংলা + English</p>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* Group Conversation Demo */}
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              {/* <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Users className="w-8 h-8 text-white" />
@@ -139,7 +155,7 @@ function pages() {
                   </Button>
                   <p className="text-sm text-gray-500 mt-3">⏱️ 5-6 min demo • 👥 Multi-participant</p>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
 
             {/* Call to Action */}
