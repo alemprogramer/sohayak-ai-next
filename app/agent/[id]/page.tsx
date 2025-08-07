@@ -14,23 +14,25 @@ import {
 import { Room, RoomEvent } from "livekit-client";
 import type { ConnectionDetails } from "../../api/connection-details/route";
 import { useSearchParams } from "next/navigation";
+import { TanningDialog } from "@/app/demos/__components/TrainnerModel";
 
 function VoiceAgentCard({
   agentName = "AI Assistant",
   agentRole = "Voice Agent",
   agentAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
   onConnect,
+  setOpenModel
 }: {
   agentName?: string;
   agentRole?: string;
   agentAvatar?: string;
   onConnect: () => void;
+  setOpenModel: any;
 }) {
   const { state: agentState } = useVoiceAssistant();
   console.log("🚀 ~ VoiceAgentCard ~ agentState:", agentState)
   const [time, setTime] = useState(0);
-  const [openModel,setOpenModel] = useState(false)
-  console.log("🚀 ~ VoiceAgentCard ~ openModel:", openModel)
+  // const [openModel,setOpenModel] = useState(false)
   const searchParams = useSearchParams();
   const training = searchParams.get("training");
   console.log("🚀 ~ VoiceAgentCard ~ train:", training)
@@ -145,7 +147,7 @@ function VoiceAgentCard({
       />
 
       <div className="absolute top-4 right-4 flex gap-2">
-        {training == 'verticasoft'&& <MessageSquare onClick={()=>setOpenModel(prev=>!prev)} className="w-3 h-3 cursor-pointer" />}
+        {training == 'verticasoft'&& <MessageSquare onClick={()=>setOpenModel((prev:boolean)=>!prev)} className="w-3 h-3 cursor-pointer" />}
         
         <motion.div
           className={cn("w-3 h-3 rounded-full", isConnected ? "bg-green-500" : "bg-gray-400")}
@@ -210,6 +212,7 @@ function VoiceAgentCard({
 
 function MultipleVoiceAgentCards() {
   const [room] = useState(new Room());
+  const [openModel,setOpenModel] = useState(false)
 
   useEffect(() => {
     room.on(RoomEvent.MediaDevicesError, onDeviceFailure);
@@ -257,12 +260,14 @@ function MultipleVoiceAgentCards() {
                   agentRole={agent.role}
                   agentAvatar={agent.avatar}
                   onConnect={onConnect}
+                  setOpenModel={setOpenModel}
                 />
               </div>
             ))}
           </div>
         </div>
       </div>
+      <TanningDialog open={openModel} setOpen={setOpenModel}/>
     </RoomContext.Provider>
   );
 }
