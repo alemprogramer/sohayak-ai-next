@@ -13,7 +13,7 @@ import {
 } from "@livekit/components-react";
 import { Room, RoomEvent } from "livekit-client";
 import type { ConnectionDetails } from "../../api/connection-details/route";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { TanningDialog } from "@/app/demos/__components/TrainnerModel";
 
 function VoiceAgentCard({
@@ -35,7 +35,6 @@ function VoiceAgentCard({
   // const [openModel,setOpenModel] = useState(false)
   const searchParams = useSearchParams();
   const training = searchParams.get("training");
-  console.log("🚀 ~ VoiceAgentCard ~ train:", training)
 
   const isListening = agentState === "listening";
   const isSpeaking = agentState === "speaking";
@@ -213,7 +212,8 @@ function VoiceAgentCard({
 function MultipleVoiceAgentCards() {
   const [room] = useState(new Room());
   const [openModel,setOpenModel] = useState(false)
-
+ const params = useParams();
+  console.log("🚀 ~ VoiceAgentCard ~ train:", params?.id)
   useEffect(() => {
     room.on(RoomEvent.MediaDevicesError, onDeviceFailure);
     return () => {
@@ -222,7 +222,7 @@ function MultipleVoiceAgentCards() {
   }, [room]);
 
   const onConnect = useCallback(async () => {
-    const companyId: any = "6869636ed594fd6701d7714f";
+    const companyId: any =  params?.id || "6869636ed594fd6701d7714f";
     const url = new URL(
       process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT ?? "/api/connection-details",
       window.location.origin

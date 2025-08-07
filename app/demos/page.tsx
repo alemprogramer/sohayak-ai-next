@@ -8,7 +8,8 @@ import TryDemoButton from './__components/TryDemoButton';
 async function getAgentData() {
   const res = await fetch(
     "https://voice-agent.verticasoft.com/api/v1/en/agent?from=shohayok",
-    { cache: "force-cache" } // "no-store"  // live data এর জন্য
+    // { cache: "force-cache" }, // "no-store"  // live data এর জন্য
+    { cache: "no-store" }
   );
   if (!res.ok) throw new Error("Failed to fetch agent data");
   return res.json();
