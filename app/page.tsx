@@ -1,9 +1,16 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, Mic } from "lucide-react"
 import Image from "next/image"
 import Header from "./__components/Header"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/demos");  // আপনার পছন্দসই route
+  };
   return (
     <>
       {/* Header */}
@@ -28,7 +35,7 @@ export default function Home() {
               </p>
             </div>
 
-            <Button className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 text-lg flex items-center gap-2">
+            <Button onClick={handleClick} className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 text-lg flex items-center gap-2 cursor-pointer">
               <Mic className="w-5 h-5" />
               Test Demo
             </Button>
