@@ -9,12 +9,14 @@ export async function POST(req: Request) {
   const event = await req.json();
 
   const { event: eventType, participant, room, timestamp } = event;
+  console.log("🚀 ~ POST ~ event:", event)
 
   if (!participant?.identity || !room || !timestamp) {
     return NextResponse.json({ message: "Invalid event data" }, { status: 400 });
   }
 
   try {
+    console.log("🚀 ~ POST ~ eventType:", eventType)
     if (eventType === "participant_joined") {
       // Create a new session or update if exists without leaveTime
       await CallSession.findOneAndUpdate(
