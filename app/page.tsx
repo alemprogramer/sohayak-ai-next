@@ -388,116 +388,231 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== TECH STACK SECTION ===== */}
-      <section className="px-6 py-16 lg:px-[10%] bg-gray-50/50">
+
+
+
+      {/* ===== VOICE AI PLATFORM FEATURES ===== */}
+      <section className="px-6 py-16 lg:px-[10%]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="inline-block bg-purple-100 text-purple-600 text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-              ⚙️ Powered By
+          <div className="text-center mb-14">
+            <span className="inline-block bg-green-100 text-green-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
+              🎙️ Voice AI Engine
             </span>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              World-Class <span className="text-purple-600">AI Technology</span>
+              আমাদের <span className="text-green-600">Voice AI Platform</span> এর শক্তি
             </h2>
-            <p className="text-gray-500 max-w-xl mx-auto">
-              SohayakAI বিশ্বের সেরা AI মডেল ও Tools দিয়ে তৈরি — আপনার ব্যবসার জন্য সবচেয়ে শক্তিশালী সমাধান
+            <p className="text-gray-500 max-w-2xl mx-auto">
+              SohayakAI এর নিজস্ব Voice AI Engine বিশ্বমানের real-time technology দিয়ে তৈরি —
+              প্রতিটি feature আপনার business এর জন্য optimize করা
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* OpenAI GPT-4o */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center mb-4 text-white text-2xl font-bold">
-                ⬛
-              </div>
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">LLM Model</div>
-              <h3 className="font-bold text-gray-900 text-lg">OpenAI GPT-4o</h3>
-              <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-                কথোপকথন বোঝা ও উত্তর তৈরির জন্য OpenAI এর সবচেয়ে শক্তিশালী language model।
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">Voice AI</span>
-                <span className="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">Chat</span>
-              </div>
-            </div>
+          {/* Main Feature Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
 
-            {/* Gemini */}
-            <div className="bg-white rounded-2xl p-6 border border-blue-50 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4 text-white text-2xl">
-                ✦
+            {[
+              {
+                emoji: "⚡",
+                bg: "bg-yellow-50",
+                border: "border-yellow-100",
+                iconBg: "bg-yellow-100",
+                iconColor: "text-yellow-600",
+                title: "Ultra Low Latency",
+                subtitle: "< 300ms response time",
+                desc: "কথা শেষ হওয়ার আগেই AI বুঝে ফেলে। মানুষের মতো স্বাভাবিক কথোপকথন — কোনো awkward pause নেই।",
+                tags: ["Real-time", "WebRTC"],
+              },
+              {
+                emoji: "🗣️",
+                bg: "bg-amber-50",
+                border: "border-amber-100",
+                iconBg: "bg-amber-100",
+                iconColor: "text-amber-700",
+                title: "TurnDetector() Audio Model",
+                subtitle: "Intelligent Turn Detection",
+                desc: "গ্রাহক কখন কথা শেষ করেছেন তা নির্ভুলভাবে সনাক্ত করে। গ্রাহক থামলে বা কথা শেষ করলেই কেবল AI উত্তর দেওয়া শুরু করে।",
+                tags: ["Turn Detection", "Audio Model"],
+              },
+              {
+                emoji: "🧠",
+                bg: "bg-teal-50",
+                border: "border-teal-100",
+                iconBg: "bg-teal-100",
+                iconColor: "text-teal-700",
+                title: "VAT AI (Voice Activity Detection)",
+                subtitle: "Smart Voice Detection",
+                desc: "অপ্রয়োজনীয় শব্দ, কাশি বা দীর্ঘ নীরবতা বাদ দিয়ে কেবল মানুষের কণ্ঠস্বরকে নিখুঁতভাবে চিহ্নিত করে প্রসেস করে।",
+                tags: ["VAT AI", "VAD"],
+              },
+              {
+                emoji: "🔌",
+                bg: "bg-indigo-50",
+                border: "border-indigo-100",
+                iconBg: "bg-indigo-100",
+                iconColor: "text-indigo-700",
+                title: "Smart Function Calling",
+                subtitle: "Real-time ERP Data Fetch",
+                desc: "যেকোনো ERP বা CRM API থেকে রিয়েল-টাইমে ডাটা নিয়ে সেটার উপর ভিত্তি করে গ্রাহককে তাদের চাহিদামতো তথ্য দেয় (যেমন: অর্ডার বা পেমেন্ট স্ট্যাটাস)।",
+                tags: ["Function Call", "ERP Integration"],
+              },
+              {
+                emoji: "💾",
+                bg: "bg-emerald-50",
+                border: "border-emerald-100",
+                iconBg: "bg-emerald-100",
+                iconColor: "text-emerald-700",
+                title: "ERP & Database Write Support",
+                subtitle: "Add, Update & Delete Data",
+                desc: "যেকোনো ERP বা ডাটাবেজে নতুন কাস্টমার ইনফরমেশন যোগ করা (Add), আগের ডাটা পরিবর্তন (Update) এবং ডিলিট করার ক্ষমতা রাখে।",
+                tags: ["Database Sync", "Write & Edit"],
+              },
+              {
+                emoji: "🎙️",
+                bg: "bg-blue-50",
+                border: "border-blue-100",
+                iconBg: "bg-blue-100",
+                iconColor: "text-blue-600",
+                title: "Smart Speech-to-Text",
+                subtitle: "Bangla STT সহ",
+                desc: "বাংলা, ইংরেজি, এবং Banglish — সব ধরনের উচ্চারণ সঠিকভাবে text এ convert করে।",
+                tags: ["STT", "Bangla AI"],
+              },
+              {
+                emoji: "🔊",
+                bg: "bg-purple-50",
+                border: "border-purple-100",
+                iconBg: "bg-purple-100",
+                iconColor: "text-purple-600",
+                title: "Natural Text-to-Speech",
+                subtitle: "Human-like voice",
+                desc: "Robot মনে হয় না! আমাদের TTS engine স্বাভাবিক বাংলা কণ্ঠে কথা বলে — tone, pause সহ।",
+                tags: ["TTS", "Natural Voice"],
+              },
+              {
+                emoji: "🔇",
+                bg: "bg-slate-50",
+                border: "border-slate-100",
+                iconBg: "bg-slate-100",
+                iconColor: "text-slate-600",
+                title: "Background Noise Cancellation",
+                subtitle: "AI-powered filtering",
+                desc: "রাস্তার শব্দ, ভিড়, বা অফিসের noise — AI স্বয়ংক্রিয়ভাবে filter করে শুধু কণ্ঠস্বর নেয়।",
+                tags: ["Noise Cancel", "AI Filter"],
+              },
+              {
+                emoji: "📞",
+                bg: "bg-teal-50",
+                border: "border-teal-100",
+                iconBg: "bg-teal-100",
+                iconColor: "text-teal-600",
+                title: "Simultaneous Calls",
+                subtitle: "Unlimited concurrent",
+                desc: "একসাথে হাজার হাজার কল handle করুন। কোনো queue নেই, কোনো busy signal নেই।",
+                tags: ["Scalable", "Concurrent"],
+              },
+              {
+                emoji: "🔐",
+                bg: "bg-red-50",
+                border: "border-red-100",
+                iconBg: "bg-red-100",
+                iconColor: "text-red-600",
+                title: "End-to-End Encryption",
+                subtitle: "Bank-grade security",
+                desc: "প্রতিটি কল সম্পূর্ণ encrypted। আপনার গ্রাহকের তথ্য সম্পূর্ণ নিরাপদ।",
+                tags: ["E2E Encrypt", "Secure"],
+              },
+              {
+                emoji: "📊",
+                bg: "bg-orange-50",
+                border: "border-orange-100",
+                iconBg: "bg-orange-100",
+                iconColor: "text-orange-600",
+                title: "Call Analytics & Recording",
+                subtitle: "Full insights",
+                desc: "প্রতিটি কলের analytics, sentiment analysis, এবং recording — dashboard এ দেখুন।",
+                tags: ["Analytics", "Recording"],
+              },
+              {
+                emoji: "🌐",
+                bg: "bg-indigo-50",
+                border: "border-indigo-100",
+                iconBg: "bg-indigo-100",
+                iconColor: "text-indigo-600",
+                title: "Multi-channel Support",
+                subtitle: "Phone, Web, App",
+                desc: "Phone call, website widget, mobile app — সব channel এ একই AI agent কাজ করে।",
+                tags: ["Omni-channel", "Cross-platform"],
+              },
+              {
+                emoji: "🔄",
+                bg: "bg-emerald-50",
+                border: "border-emerald-100",
+                iconBg: "bg-emerald-100",
+                iconColor: "text-emerald-600",
+                title: "Seamless Handoff",
+                subtitle: "AI → Human transfer",
+                desc: "জটিল সমস্যা হলে AI নিজেই সঠিক human agent কে transfer করে — context সহ।",
+                tags: ["Smart Routing", "Handoff"],
+              },
+            ].map(({ emoji, bg, border, iconBg, iconColor, title, subtitle, desc, tags }) => (
+              <div
+                key={title}
+                className={`group ${bg} border-2 ${border} rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
+              >
+                <div className={`w-12 h-12 ${iconBg} rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  {emoji}
+                </div>
+                <h3 className="font-bold text-gray-900 text-lg mb-0.5">{title}</h3>
+                <p className={`text-sm font-semibold ${iconColor} mb-2`}>{subtitle}</p>
+                <p className="text-gray-500 text-sm leading-relaxed mb-4">{desc}</p>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <span key={tag} className={`${iconBg} ${iconColor} text-xs px-3 py-1 rounded-full font-medium`}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">LLM Model</div>
-              <h3 className="font-bold text-gray-900 text-lg">Google Gemini</h3>
-              <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-                Google এর multimodal AI model যা text, audio এবং context একসাথে বুঝতে পারে।
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="bg-blue-50 text-blue-600 text-xs px-3 py-1 rounded-full">Multimodal</span>
-                <span className="bg-blue-50 text-blue-600 text-xs px-3 py-1 rounded-full">Analysis</span>
-              </div>
-            </div>
-
-            {/* LiveKit */}
-            <div className="bg-white rounded-2xl p-6 border border-green-50 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="w-14 h-14 bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl flex items-center justify-center mb-4 text-white text-2xl">
-                🎙️
-              </div>
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Real-time Platform</div>
-              <h3 className="font-bold text-gray-900 text-lg">LiveKit</h3>
-              <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-                Real-time voice ও video communication এর জন্য industry-leading WebRTC infrastructure।
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="bg-green-50 text-green-600 text-xs px-3 py-1 rounded-full">WebRTC</span>
-                <span className="bg-green-50 text-green-600 text-xs px-3 py-1 rounded-full">Real-time</span>
-              </div>
-            </div>
-
-            {/* MongoDB */}
-            <div className="bg-white rounded-2xl p-6 border border-emerald-50 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center mb-4 text-white text-2xl">
-                🍃
-              </div>
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Database</div>
-              <h3 className="font-bold text-gray-900 text-lg">MongoDB Atlas</h3>
-              <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-                Customer data, conversation logs এবং analytics সুরক্ষিতভাবে সংরক্ষণের জন্য।
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="bg-emerald-50 text-emerald-600 text-xs px-3 py-1 rounded-full">Cloud DB</span>
-                <span className="bg-emerald-50 text-emerald-600 text-xs px-3 py-1 rounded-full">Scalable</span>
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* Tech flow */}
-          <div className="mt-10 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-            <p className="text-center text-sm text-gray-500 mb-4 font-medium">কীভাবে কাজ করে</p>
-            <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-medium">
-              <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl border">
-                <span>🎙️</span> Customer Call
+          {/* Bottom highlight banner */}
+          <div className="bg-gradient-to-r from-green-600 to-teal-600 rounded-2xl p-8 text-white">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+              <div>
+                <h3 className="text-2xl font-bold mb-2">
+                  সম্পূর্ণ Managed Voice AI Infrastructure
+                </h3>
+                <p className="text-green-100 max-w-xl">
+                  Server setup, scaling, maintenance — সব আমাদের দায়িত্ব। আপনি শুধু আপনার ব্যবসায় মনোযোগ দিন।
+                  আমাদের Voice AI Engine সব সামলাবে।
+                </p>
               </div>
-              <span className="text-gray-300 text-xl">→</span>
-              <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-xl border border-green-100 text-green-700">
-                <span>🔊</span> LiveKit (Voice)
-              </div>
-              <span className="text-gray-300 text-xl">→</span>
-              <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl border">
-                <span>⬛</span> GPT-4o / Gemini
-              </div>
-              <span className="text-gray-300 text-xl">→</span>
-              <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 text-emerald-700">
-                <span>🍃</span> MongoDB (Data)
-              </div>
-              <span className="text-gray-300 text-xl">→</span>
-              <div className="flex items-center gap-2 bg-teal-50 px-4 py-2 rounded-xl border border-teal-100 text-teal-700">
-                <span>✅</span> Customer Satisfied!
+              <div className="flex flex-col sm:flex-row gap-4 shrink-0">
+                <div className="text-center bg-white/15 rounded-xl px-6 py-4">
+                  <div className="text-3xl font-black">99.9%</div>
+                  <div className="text-green-200 text-sm">Uptime SLA</div>
+                </div>
+                <div className="text-center bg-white/15 rounded-xl px-6 py-4">
+                  <div className="text-3xl font-black">&lt;300ms</div>
+                  <div className="text-green-200 text-sm">Latency</div>
+                </div>
+                <div className="text-center bg-white/15 rounded-xl px-6 py-4">
+                  <div className="text-3xl font-black">∞</div>
+                  <div className="text-green-200 text-sm">Concurrent Calls</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ===== CTA SECTION ===== */}
+
+
+
+
+
+
       <section className="px-6 py-16 lg:px-[10%]">
         <div className="max-w-7xl mx-auto">
           <div className="bg-gradient-to-br from-teal-600 to-cyan-700 rounded-3xl p-10 lg:p-16 text-center text-white relative overflow-hidden">
