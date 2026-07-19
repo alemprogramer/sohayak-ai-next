@@ -254,7 +254,7 @@ function MultipleVoiceAgentCards() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 justify-items-center">
             {agents.map((agent) => (
-              <div key={agent.id} className="w-[25%]">
+              <div key={agent.id} className="w-full max-w-[350px] lg:w-[25%]">
                 <VoiceAgentCard
                   agentName={agent.name}
                   agentRole={agent.role}
