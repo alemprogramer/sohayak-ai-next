@@ -2,7 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 
+interface AgentData {
+  _id: string;
+  name: string;
+  text: string;
+  avatar: string;
+  systemPrompt: string;
+  firstMsg: string;
+}
+
 export default function V2RealtimePage() {
+  const [agentId, setAgentId] = useState<string | null>(null);
+  const [agent, setAgent] = useState<AgentData | null>(null);
+
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dataChannel, setDataChannel] = useState<RTCDataChannel | null>(null);
@@ -15,10 +27,46 @@ export default function V2RealtimePage() {
 
   const isSpeaking = isSessionActive;
 
+  // 1. Get agentId from window search parameters
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      setAgentId(params.get("agentId"));
+    }
+  }, []);
+
+  // 2. Fetch agent details from JSON configuration
+  useEffect(() => {
+    async function loadAgent() {
+      try {
+        const response = await fetch("/v2-agents.json");
+        const agents: AgentData[] = await response.json();
+        
+        // Find agent by ID, default to the first one if not specified/found
+        const selectedAgent = agents.find((a) => a._id === agentId) || agents[0];
+        setAgent(selectedAgent);
+      } catch (error) {
+        console.error("Failed to load agent configuration:", error);
+      }
+    }
+
+    loadAgent();
+  }, [agentId]);
+
   async function startSession() {
+    if (!agent) return;
     setIsLoading(true);
     try {
-      const tokenResponse = await fetch("/api/v2/token");
+      // Call token API endpoint with the selected agent's prompt
+      const tokenResponse = await fetch("/api/v2/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          instructions: agent.systemPrompt,
+        }),
+      });
       const data = await tokenResponse.json();
       const EPHEMERAL_KEY = data.value;
 
@@ -81,19 +129,34 @@ export default function V2RealtimePage() {
   }
 
   useEffect(() => {
-    if (!dataChannel) return;
+    if (!dataChannel || !agent) return;
 
     const onOpen = () => {
       setIsSessionActive(true);
       setIsLoading(false);
 
+      // Send session update with the dynamic system prompt
       const sessionUpdate = {
         type: "session.update",
         session: {
-          instructions: "You are a helpful Bangla AI assistant. Talk naturally in Bengali with a warm tone.",
+          instructions: agent.systemPrompt,
         },
       };
       dataChannel.send(JSON.stringify(sessionUpdate));
+
+      // Trigger the custom first message greeting
+      if (agent.firstMsg) {
+        setTimeout(() => {
+          const responseCreate = {
+            type: "response.create",
+            response: {
+              modalities: ["text", "audio"],
+              instructions: `Please greet the user by saying exactly this in Bengali: "${agent.firstMsg}"`,
+            },
+          };
+          dataChannel.send(JSON.stringify(responseCreate));
+        }, 1000);
+      }
 
       timerRef.current = setInterval(() => {
         setSeconds((s) => s + 1);
@@ -105,7 +168,7 @@ export default function V2RealtimePage() {
     return () => {
       dataChannel.removeEventListener("open", onOpen);
     };
-  }, [dataChannel]);
+  }, [dataChannel, agent]);
 
   useEffect(() => {
     return () => {
@@ -117,6 +180,14 @@ export default function V2RealtimePage() {
 
   const minutes = String(Math.floor(seconds / 60)).padStart(2, "0");
   const secs = String(seconds % 60).padStart(2, "0");
+
+  if (!agent) {
+    return (
+      <div className="py-20 px-6 flex items-center justify-center text-lg text-gray-700">
+        Loading Voice Agent...
+      </div>
+    );
+  }
 
   return (
     <div className="py-20 px-6 flex flex-col items-center justify-center">
@@ -132,16 +203,16 @@ export default function V2RealtimePage() {
       <div className={`relative w-[340px] rounded-3xl bg-white/80 backdrop-blur-md p-8 text-center shadow-2xl border border-white/20 transition-all duration-500 ${isSpeaking ? 'ring-4 ring-teal-400' : ''}`}>
         <div className="relative mx-auto w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg bg-cyan-50">
           <img
-            src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
-            alt="Maya"
+            src={agent.avatar}
+            alt={agent.name}
             className="w-full h-full object-cover"
           />
         </div>
 
         <h2 className="mt-4 text-2xl font-bold text-gray-900">
-          Maya
+          {agent.name}
         </h2>
-        <p className="text-sm font-medium text-teal-600">Sales Assistant</p>
+        <p className="text-sm font-medium text-teal-600">{agent.text}</p>
 
         <div className="mt-6 text-gray-800 font-mono text-3xl font-semibold tracking-wider">
           {minutes}:{secs}
