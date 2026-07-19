@@ -159,6 +159,40 @@ async function pages() {
               </Card> */}
             </div>
 
+            {/* Version 2 Demos */}
+            <div className="text-center mt-20 mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Experience Our <span className="text-orange-500">Premium Voice Agent</span>
+              </h2>
+              <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+                Try our ultra-low latency voice assistant powered by direct WebRTC connections for real-time conversation.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center mb-16">
+              {/* V2 Sales Assistant Demo Card */}
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 w-full">
+                <CardHeader className="text-center pb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Phone className="w-8 h-8 text-white" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-gray-900">Maya (Premium)</CardTitle>
+                  <CardDescription className="text-gray-600">
+                    Ultra-low latency real-time voice assistant demo
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <a href="/v2" target="_blank" rel="noopener noreferrer" className="block w-full">
+                    <Button className="bg-teal-600 hover:bg-teal-700 text-white w-full flex items-center justify-center gap-2 cursor-pointer">
+                      <Mic className="w-4 h-4" />
+                      Try Premium Demo
+                    </Button>
+                  </a>
+                  <p className="text-sm text-gray-500 mt-3">⏱️ 3-4 min demo • ⚡ Ultra-Low Latency</p>
+                </CardContent>
+              </Card>
+            </div>
+
             {/* Call to Action */}
             <div className="text-center mt-12">
               <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto">
